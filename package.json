@@ -1,0 +1,24 @@
+{
+  "name": "babel-plugin-resolve-barrel-files",
+  "version": "0.0.1",
+  "description": "A babel plugin that solves typescript barrel files",
+  "main": "index.js",
+  "repository": "https://github.com/Grohden/babel-plugin-resolve-barrel-files",
+  "author": "gabriel.rohden <gabriel_rohden@outlook.com>",
+  "license": "MIT",
+  "scripts": {
+    "test": "mocha --require @babel/register"
+  },
+  "dependencies": {
+    "@babel/types": "^7.16.0",
+    "is-valid-path": "^0.1.1",
+    "typescript": "^4.5.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.16.0",
+    "@babel/preset-env": "^7.16.4",
+    "@babel/register": "^7.16.0",
+    "chai": "^4.3.4",
+    "mocha": "^9.1.3"
+  }
+}
