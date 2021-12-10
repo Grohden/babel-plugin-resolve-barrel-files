@@ -60,7 +60,11 @@ import make this plugin useless.
 
 ## Installation
 
-TODO
+```
+npm install --save babel-plugin-resolve-barrel-files
+# or
+yarn add -D babel-plugin-resolve-barrel-files
+```
 
 ## Usage
 
