@@ -1,5 +1,5 @@
 function err(msg) {
-  throw new Error('babel-plugin-resolve-barrel-files: ' + msg);
+  throw new Error("babel-plugin-resolve-barrel-files: " + msg);
 }
 
 function partition(predicate, list) {
@@ -19,5 +19,5 @@ function partition(predicate, list) {
 
 module.exports = {
   err,
-  partition
+  partition,
 };

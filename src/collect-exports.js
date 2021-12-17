@@ -1,12 +1,11 @@
-const fs = require('fs');
+const fs = require("fs");
 
-const ts = require('typescript');
+const ts = require("typescript");
 
 /**
  * Parses a barrel (index) file, extracts all it's export
  * names and returns an object that maps
  * a import name to the path + some meta infos.
- *
  *
  * Note: this doesn't handle the following cases:
  * ```

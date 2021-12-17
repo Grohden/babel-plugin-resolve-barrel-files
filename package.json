@@ -7,7 +7,8 @@
   "author": "gabriel.rohden <gabriel_rohden@outlook.com>",
   "license": "MIT",
   "scripts": {
-    "test": "mocha --require @babel/register"
+    "test": "mocha --require @babel/register",
+    "fmt": "dprint fmt"
   },
   "dependencies": {
     "@babel/types": "^7.16.0",
@@ -19,6 +20,7 @@
     "@babel/preset-env": "^7.16.4",
     "@babel/register": "^7.16.0",
     "chai": "^4.3.4",
+    "dprint": "^0.19.1",
     "mocha": "^9.1.3"
   }
 }
