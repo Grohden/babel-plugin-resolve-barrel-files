@@ -111,6 +111,9 @@ module.exports = {
 }
 ```
 
+> **Note**: if you make changes to the babel config
+> be sure to restart your bundler with a clear babel cache
+
 ### I have a problem, what should I do?
 
 Feel free to open a PR or an issue and I'll try to help you :D

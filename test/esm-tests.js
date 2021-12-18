@@ -1,7 +1,9 @@
+const path = require("path");
 const { assert } = require("chai");
 const { esmBarrel, transform } = require("./utils");
 
 describe("esm import transformations", function() {
+  const barrelFolder = path.resolve(esmBarrel, "..");
   const esmTransform = transform({
     moduleType: "esm",
     mainBarrelPath: esmBarrel,
@@ -13,9 +15,9 @@ describe("esm import transformations", function() {
     assert.equal(
       code,
       [
-        `import { Bar } from "${esmBarrel}/foo-bar";`,
-        `import { Abc as Bazz } from "${esmBarrel}/bazz";`,
-        `import { default as Buzz } from "${esmBarrel}/buzz";`,
+        `import { Bar } from "${barrelFolder}/foo-bar";`,
+        `import { Abc as Bazz } from "${barrelFolder}/bazz";`,
+        `import { default as Buzz } from "${barrelFolder}/buzz";`,
       ].join("\n"),
     );
   });
@@ -26,7 +28,7 @@ describe("esm import transformations", function() {
     assert.equal(
       code,
       [
-        `import { Abc as Foo } from "${esmBarrel}/bazz";`,
+        `import { Abc as Foo } from "${barrelFolder}/bazz";`,
       ].join("\n"),
     );
   });

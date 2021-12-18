@@ -9,6 +9,7 @@ const { resolveLogLevel, DEBUG, INFO } = require("./src/log");
 const cachedResolvers = {};
 
 function getCachedExports({
+  logLevel,
   moduleName,
   barrelFilePath,
   moduleType,
@@ -25,6 +26,8 @@ function getCachedExports({
     cachedResolvers[moduleName] = collectCjsExports(barrelFilePath);
   }
 
+  logLevel >= INFO && console.log(`[resolve-barrel-files] '${moduleName}' exports:`, cachedResolvers[moduleName]);
+
   return cachedResolvers[moduleName];
 }
 
@@ -40,15 +43,18 @@ module.exports = function() {
         }
 
         const transforms = [];
-        const sourceImport = sourceConfig.mainBarrelPath;
+        const mainBarrelPath = sourceConfig.mainBarrelPath;
+        const mainBarrelFolder = pathLib.join(mainBarrelPath, "..");
         const moduleType = sourceConfig.moduleType || "commonjs";
         const logLevel = resolveLogLevel(sourceConfig.logLevel);
 
-        logLevel >= INFO && console.log(`[${moduleName}] Resolving ${moduleType} imports from ${sourceImport}`);
+        logLevel >= DEBUG
+          && console.log(`[resolve-barrel-files] Resolving ${moduleType} imports from ${mainBarrelPath}`);
 
         const exports = getCachedExports({
+          logLevel,
           moduleName,
-          barrelFilePath: sourceImport,
+          barrelFilePath: mainBarrelPath,
           moduleType,
         });
 
@@ -74,7 +80,9 @@ module.exports = function() {
             continue;
           }
 
-          const importFrom = pathLib.join(sourceImport, exportInfo.importPath);
+          const importFrom = pathLib.join(mainBarrelFolder, exportInfo.importPath);
+
+          logLevel >= DEBUG && console.log(`[${moduleName}] Resolving '${importName}' to ${importFrom}`);
 
           let newImportSpecifier = memberImport;
 

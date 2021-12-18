@@ -1,7 +1,9 @@
+const path = require("path");
 const { assert } = require("chai");
 const { cjsBarrel, transform } = require("./utils");
 
 describe("commonjs import transformations", function() {
+  const barrelFolder = path.resolve(cjsBarrel, "..");
   const cjsTransform = transform({
     moduleType: "commonjs",
     mainBarrelPath: cjsBarrel,
@@ -13,9 +15,9 @@ describe("commonjs import transformations", function() {
     assert.equal(
       code,
       [
-        `import { Bar } from "${cjsBarrel}/foo-bar";`,
-        `import { Abc as Bazz } from "${cjsBarrel}/bazz";`,
-        `import { default as Buzz } from "${cjsBarrel}/buzz";`,
+        `import { Bar } from "${barrelFolder}/foo-bar";`,
+        `import { Abc as Bazz } from "${barrelFolder}/bazz";`,
+        `import { default as Buzz } from "${barrelFolder}/buzz";`,
       ].join("\n"),
     );
   });
@@ -26,7 +28,19 @@ describe("commonjs import transformations", function() {
     assert.equal(
       code,
       [
-        `import { Abc as Foo } from "${cjsBarrel}/bazz";`,
+        `import { Abc as Foo } from "${barrelFolder}/bazz";`,
+      ].join("\n"),
+    );
+  });
+
+  it("should resolve member imports with wildcard generated code", function() {
+    const code = cjsTransform(`import { Wildcard, Unique } from 'react-ui-lib';`);
+
+    assert.equal(
+      code,
+      [
+        `import { default as Wildcard } from "${barrelFolder}/wildcard";`,
+        `import { Unique } from "${barrelFolder}/wildcard";`,
       ].join("\n"),
     );
   });

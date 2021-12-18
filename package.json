@@ -1,6 +1,6 @@
 {
   "name": "babel-plugin-resolve-barrel-files",
-  "version": "0.0.2",
+  "version": "0.2.0",
   "description": "A babel plugin that solves typescript barrel files",
   "main": "index.js",
   "repository": "https://github.com/Grohden/babel-plugin-resolve-barrel-files",
