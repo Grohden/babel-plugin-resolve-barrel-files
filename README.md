@@ -101,7 +101,7 @@ module.exports = {
       {
         'my-lib': {
           moduleType: 'commonjs', // or 'esm'
-          barrelFilePath: path.resolve(require.resolve('my-lib'))
+          barrelFilePath: require.resolve('my-lib')
           // if you want to debug this plugin
           // logLevel: "debug" | "info" 
         },
@@ -113,7 +113,7 @@ module.exports = {
 
 ### I have a problem, what should I do?
 
-Feel free to open a PR, or an issue and I'll try to help you :D
+Feel free to open a PR or an issue and I'll try to help you :D
 
 ### Mentions
 
