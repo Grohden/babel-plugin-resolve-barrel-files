@@ -15,7 +15,7 @@ const findReturnStatement = (child) => {
 
 /**
  * Given a call expression returns the require call expression either from
- * direct require call or from wrapped _interopRequireDefault call
+ * direct require call or from wrapped _interopRequireDefault or _interopRequireWildcard call
  *
  * eg:
  * require("./buzz"); // returns require("./buzz")
@@ -29,6 +29,10 @@ const getRequireCallData = (child) => {
 
     if (callExpression.kind === ts.SyntaxKind.Identifier) {
       if (callExpression.text === "_interopRequireDefault") {
+        return getRequireCallData(child.arguments[0]);
+      }
+
+      if (callExpression.text === "_interopRequireWildcard") {
         return getRequireCallData(child.arguments[0]);
       }
 
