@@ -2,8 +2,13 @@ const { assert } = require("chai");
 const { esmBarrel, transform } = require("./utils");
 
 describe("esm import transformations", function() {
+  const esmTransform = transform({
+    moduleType: "esm",
+    mainBarrelPath: esmBarrel,
+  });
+
   it("should resolve member imports from barrel file", function() {
-    const code = transform(`import { Bar, Bazz, Buzz } from 'react-ui-lib';`);
+    const code = esmTransform(`import { Bar, Bazz, Buzz } from 'react-ui-lib';`);
 
     assert.equal(
       code,
@@ -16,7 +21,7 @@ describe("esm import transformations", function() {
   });
 
   it("should resolve member imports with alias from barrel file", function() {
-    const code = transform(`import { Bazz as Foo } from 'react-ui-lib';`);
+    const code = esmTransform(`import { Bazz as Foo } from 'react-ui-lib';`);
 
     assert.equal(
       code,

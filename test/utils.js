@@ -2,28 +2,32 @@ const path = require("path");
 const babel = require("@babel/core");
 
 const esmBarrel = path.resolve(__dirname, "./fixtures/esm.js");
+const cjsBarrel = path.resolve(__dirname, "./fixtures/cjs.js");
 
 function createOptions({
   libraryName = "react-ui-lib",
-  mainBarrelPath = esmBarrel,
-  isCjs = false,
+  mainBarrelPath,
+  moduleType,
 } = {}) {
   return {
     [libraryName]: {
       mainBarrelPath,
-      isCommonJSModule: isCjs,
+      moduleType,
+      logLevel: "info",
     },
   };
 }
 
-function transform(code, options) {
-  return babel.transform(code, {
-    presets: [["@babel/preset-env", { modules: false }]],
-    plugins: [["./index", createOptions(options)]],
-  }).code;
-}
+const transform = (options) =>
+  (code) => {
+    return babel.transform(code, {
+      presets: [["@babel/preset-env", { modules: false }]],
+      plugins: [["./index", createOptions(options)]],
+    }).code;
+  };
 
 module.exports = {
   transform,
   esmBarrel,
+  cjsBarrel,
 };

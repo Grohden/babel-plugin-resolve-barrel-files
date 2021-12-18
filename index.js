@@ -2,21 +2,30 @@ const pathLib = require("path");
 const types = require("@babel/types");
 
 const { err, partition } = require("./src/misc");
-const { collectExports } = require("./src/collect-exports");
+const { collectEsmExports } = require("./src/collect-esm-exports");
+const { collectCjsExports } = require("./src/collect-cjs-exports");
+const { resolveLogLevel, DEBUG, INFO } = require("./src/log");
 
 const cachedResolvers = {};
 
-function getOrCacheExports({
+function getCachedExports({
   moduleName,
   barrelFilePath,
+  moduleType,
 }) {
   if (cachedResolvers[moduleName]) {
     return cachedResolvers[moduleName];
   }
 
-  return cachedResolvers[moduleName] = collectExports(
-    require.resolve(barrelFilePath),
-  );
+  if (moduleType === "esm") {
+    cachedResolvers[moduleName] = collectEsmExports(barrelFilePath);
+  }
+
+  if (moduleType === "commonjs") {
+    cachedResolvers[moduleName] = collectCjsExports(barrelFilePath);
+  }
+
+  return cachedResolvers[moduleName];
 }
 
 module.exports = function() {
@@ -32,9 +41,15 @@ module.exports = function() {
 
         const transforms = [];
         const sourceImport = sourceConfig.mainBarrelPath;
-        const exports = getOrCacheExports({
+        const moduleType = sourceConfig.moduleType || "commonjs";
+        const logLevel = resolveLogLevel(sourceConfig.logLevel);
+
+        logLevel >= INFO && console.log(`[${moduleName}] Resolving ${moduleType} imports from ${sourceImport}`);
+
+        const exports = getCachedExports({
           moduleName,
           barrelFilePath: sourceImport,
+          moduleType,
         });
 
         const [fullImports, memberImports] = partition(
@@ -50,6 +65,15 @@ module.exports = function() {
           const importName = memberImport.imported.name;
           const localName = memberImport.local.name;
           const exportInfo = exports[importName];
+
+          if (!exports[importName]) {
+            logLevel >= DEBUG
+              && console.log(
+                `[${moduleName}] No export info found for ${importName}, are you sure this is a ${moduleType} module?`,
+              );
+            continue;
+          }
+
           const importFrom = pathLib.join(sourceImport, exportInfo.importPath);
 
           let newImportSpecifier = memberImport;

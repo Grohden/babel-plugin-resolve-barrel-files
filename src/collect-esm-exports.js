@@ -3,7 +3,7 @@ const fs = require("fs");
 const ts = require("typescript");
 
 /**
- * Parses a barrel (index) file, extracts all it's export
+ * Parses a ESM barrel (index) file, extracts all it's export
  * names and returns an object that maps
  * a import name to the path + some meta infos.
  *
@@ -18,7 +18,7 @@ const ts = require("typescript");
  *
  * The case above is not supported.
  */
-const collectExports = (file) => {
+const collectEsmExports = (file) => {
   const sourceFile = ts.createSourceFile(
     file,
     fs.readFileSync(file).toString(),
@@ -47,4 +47,4 @@ const collectExports = (file) => {
   return exports;
 };
 
-module.exports = { collectExports };
+module.exports = { collectEsmExports };
