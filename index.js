@@ -6,32 +6,32 @@ const { collectEsmExports } = require("./src/collect-esm-exports");
 const { collectCjsExports } = require("./src/collect-cjs-exports");
 const { resolveLogLevel, DEBUG, INFO } = require("./src/log");
 
-const cachedResolvers = {};
+module.exports = function() {
+  const cachedResolvers = {};
 
-function getCachedExports({
-  logLevel,
-  moduleName,
-  barrelFilePath,
-  moduleType,
-}) {
-  if (cachedResolvers[moduleName]) {
+  function getCachedExports({
+    logLevel,
+    moduleName,
+    barrelFilePath,
+    moduleType,
+  }) {
+    if (cachedResolvers[moduleName]) {
+      return cachedResolvers[moduleName];
+    }
+
+    if (moduleType === "esm") {
+      cachedResolvers[moduleName] = collectEsmExports(barrelFilePath);
+    }
+
+    if (moduleType === "commonjs") {
+      cachedResolvers[moduleName] = collectCjsExports(barrelFilePath);
+    }
+
+    logLevel >= INFO && console.log(`[resolve-barrel-files] '${moduleName}' exports:`, cachedResolvers[moduleName]);
+
     return cachedResolvers[moduleName];
   }
 
-  if (moduleType === "esm") {
-    cachedResolvers[moduleName] = collectEsmExports(barrelFilePath);
-  }
-
-  if (moduleType === "commonjs") {
-    cachedResolvers[moduleName] = collectCjsExports(barrelFilePath);
-  }
-
-  logLevel >= INFO && console.log(`[resolve-barrel-files] '${moduleName}' exports:`, cachedResolvers[moduleName]);
-
-  return cachedResolvers[moduleName];
-}
-
-module.exports = function() {
   return {
     visitor: {
       ImportDeclaration: function(path, state) {
