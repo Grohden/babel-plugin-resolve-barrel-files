@@ -16,7 +16,7 @@ const createCachedExportsHandler = (exports) => {
     }
 
     if (moduleType === "esm") {
-      cachedResolvers[moduleName] = collectEsmExports(barrelFilePath);
+      cachedResolvers[moduleName] = collectEsmExports(barrelFilePath, logLevel);
     }
 
     if (moduleType === "commonjs") {

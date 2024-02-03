@@ -45,4 +45,21 @@ describe("esm import transformations", function() {
       ].join("\n"),
     );
   });
+
+  it("should resolve independent of barrel import path", function() {
+    const code = transform({
+      libraryName: barrelFolder + "/esm",
+      moduleType: "esm",
+      mainBarrelPath: esmBarrel,
+    })(`import { foo, bar, bazz } from './test/fixtures/esm';`);
+
+    assert.equal(
+      code,
+      [
+        `import { foo } from "${barrelFolder}/esm-subfile";`,
+        `import { bar } from "${barrelFolder}/esm-subfile";`,
+        `import { bazz } from "${barrelFolder}/esm-subfile";`,
+      ].join("\n"),
+    );
+  });
 });

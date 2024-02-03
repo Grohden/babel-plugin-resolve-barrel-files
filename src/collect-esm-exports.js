@@ -3,6 +3,7 @@ const path = require("path");
 
 const ts = require("typescript");
 const { collectEsmSubFileExports } = require("./collect-esm-subfile-exports");
+const { INFO } = require("./log");
 
 /**
  * Parses an ESM barrel (index) file, extracts all it's export
@@ -20,7 +21,7 @@ const { collectEsmSubFileExports } = require("./collect-esm-subfile-exports");
  *
  * The case above is not supported.
  */
-const collectEsmExports = (file) => {
+const collectEsmExports = (file, logLevel) => {
   const sourceFile = ts.createSourceFile(
     file,
     fs.readFileSync(file).toString(),
@@ -56,7 +57,8 @@ const collectEsmExports = (file) => {
       const subFileExt = path.extname(subFile) || guessExtension(subFile);
 
       if (!subFileExt) {
-        console.warn(`Could not find extension for ${subFile}, ignoring`);
+        logLevel >= INFO
+          && console.info(`[resolve-barrel-files] Could not find extension for ${subFile}, ignoring`);
 
         return;
       }
@@ -64,7 +66,7 @@ const collectEsmExports = (file) => {
       [...collectEsmSubFileExports(subFile + subFileExt)].forEach((name) => {
         exports[name] = {
           importPath: importName,
-          importAlias: null,
+          importAlias: undefined,
         };
       });
     }

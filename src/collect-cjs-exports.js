@@ -84,7 +84,7 @@ const getRequireVariableStatementData = (child) => {
  *
  * Note: this doesn't handle dynamic imports.
  */
-const collectCjsExports = (file) => {
+const collectCjsExports = (file, logLevel) => {
   const sourceFile = ts.createSourceFile(
     file,
     fs.readFileSync(file).toString(),

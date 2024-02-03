@@ -4,16 +4,18 @@ const types = require("@babel/types");
 const { err, partition } = require("./src/misc");
 const { resolveLogLevel, DEBUG } = require("./src/log");
 const { createCachedExportsHandler } = require("./src/cached-exports");
+const { normalizePath } = require("./src/normalize-path");
 
 module.exports = function() {
-  const fromCache = createCachedExportsHandler();
+  const resolveFromCached = createCachedExportsHandler();
 
   return {
     name: "resolve-barrel-files",
     visitor: {
       ImportDeclaration: function(path, state) {
         const moduleName = path.node.source.value;
-        const sourceConfig = state.opts?.[moduleName];
+        const normalized = normalizePath(moduleName);
+        const sourceConfig = state.opts?.[normalized];
 
         if (!sourceConfig) {
           return;
@@ -28,9 +30,9 @@ module.exports = function() {
         logLevel >= DEBUG
           && console.debug(`[resolve-barrel-files] Resolving ${moduleType} imports from ${mainBarrelPath}`);
 
-        const exports = fromCache({
+        const exports = resolveFromCached({
           logLevel,
-          moduleName,
+          moduleName: normalized,
           barrelFilePath: mainBarrelPath,
           moduleType,
         });
