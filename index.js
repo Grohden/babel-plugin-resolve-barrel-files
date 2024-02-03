@@ -2,35 +2,11 @@ const pathLib = require("path");
 const types = require("@babel/types");
 
 const { err, partition } = require("./src/misc");
-const { collectEsmExports } = require("./src/collect-esm-exports");
-const { collectCjsExports } = require("./src/collect-cjs-exports");
-const { resolveLogLevel, DEBUG, INFO } = require("./src/log");
+const { resolveLogLevel, DEBUG } = require("./src/log");
+const { createCachedExportsHandler } = require("./src/cached-exports");
 
 module.exports = function() {
-  const cachedResolvers = {};
-
-  function getCachedExports({
-    logLevel,
-    moduleName,
-    barrelFilePath,
-    moduleType,
-  }) {
-    if (cachedResolvers[moduleName]) {
-      return cachedResolvers[moduleName];
-    }
-
-    if (moduleType === "esm") {
-      cachedResolvers[moduleName] = collectEsmExports(barrelFilePath);
-    }
-
-    if (moduleType === "commonjs") {
-      cachedResolvers[moduleName] = collectCjsExports(barrelFilePath);
-    }
-
-    logLevel >= INFO && console.log(`[resolve-barrel-files] '${moduleName}' exports:`, cachedResolvers[moduleName]);
-
-    return cachedResolvers[moduleName];
-  }
+  const fromCache = createCachedExportsHandler();
 
   return {
     visitor: {
@@ -49,9 +25,9 @@ module.exports = function() {
         const logLevel = resolveLogLevel(sourceConfig.logLevel);
 
         logLevel >= DEBUG
-          && console.log(`[resolve-barrel-files] Resolving ${moduleType} imports from ${mainBarrelPath}`);
+          && console.debug(`[resolve-barrel-files] Resolving ${moduleType} imports from ${mainBarrelPath}`);
 
-        const exports = getCachedExports({
+        const exports = fromCache({
           logLevel,
           moduleName,
           barrelFilePath: mainBarrelPath,
@@ -74,15 +50,16 @@ module.exports = function() {
 
           if (!exports[importName]) {
             logLevel >= DEBUG
-              && console.log(
-                `[${moduleName}] No export info found for ${importName}, are you sure this is a ${moduleType} module?`,
+              && console.debug(
+                `[resolve-barrel-files] No export info found for ${moduleName} import '${importName}', are you sure this is a ${moduleType} module?`,
               );
             continue;
           }
 
           const importFrom = pathLib.join(mainBarrelFolder, exportInfo.importPath);
 
-          logLevel >= DEBUG && console.log(`[${moduleName}] Resolving '${importName}' to ${importFrom}`);
+          logLevel >= DEBUG
+            && console.debug(`[resolve-barrel-files] Resolving ${moduleName} '${importName}' to ${importFrom}`);
 
           let newImportSpecifier = memberImport;
 
