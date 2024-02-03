@@ -9,6 +9,7 @@ module.exports = function() {
   const fromCache = createCachedExportsHandler();
 
   return {
+    name: "resolve-barrel-files",
     visitor: {
       ImportDeclaration: function(path, state) {
         const moduleName = path.node.source.value;
