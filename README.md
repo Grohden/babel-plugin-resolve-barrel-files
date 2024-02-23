@@ -130,5 +130,5 @@ Feel free to open a PR or an issue and I'll try to help you :D
 
 ### Mentions
 
-Heavily inspired by [babel-plugin-transform-imports](https://bitbucket.org/amctheatres/babel-transform-imports/src/master/)
-Another similar package: [babel-plugin-direct-import](https://github.com/avocadowastaken/babel-plugin-direct-import)
+* Heavily inspired by [babel-plugin-transform-imports](https://bitbucket.org/amctheatres/babel-transform-imports/src/master/)
+* Another similar package: [babel-plugin-direct-import](https://github.com/avocadowastaken/babel-plugin-direct-import)
