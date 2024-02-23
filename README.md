@@ -114,6 +114,16 @@ module.exports = {
 > **Note**: if you make changes to the babel config
 > be sure to restart your bundler with a clear babel cache
 
+### I want to read the output
+
+Easy, just compile with babel:
+```
+# make sure you have babel cli (you can remove later)
+yarn add -D @babel/cli
+
+yarn babel ./path/to/my-file.tsx -o ./path/to/my-file.js --compact false
+```
+
 ### I have a problem, what should I do?
 
 Feel free to open a PR or an issue and I'll try to help you :D
