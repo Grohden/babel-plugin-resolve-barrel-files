@@ -1,22 +1,33 @@
-const pathLib = require("path");
-const types = require("@babel/types");
+import type { PluginObj } from "@babel/core";
+import * as t from "@babel/types";
+import pathLib from "path";
 
-const { err, partition } = require("./src/misc");
-const { resolveLogLevel, DEBUG } = require("./src/log");
-const { createCachedExportsHandler } = require("./src/cached-exports");
-const { normalizePath } = require("./src/normalize-path");
+import { createCachedExportsHandler } from "./cached-exports";
+import { DEBUG, resolveLogLevel } from "./log";
+import { err } from "./misc";
+import { normalizePath } from "./normalize-path";
 
-module.exports = function() {
+type ModuleOption = {
+  mainBarrelPath: string;
+  moduleType?: "commonjs" | "esm";
+  logLevel?: "debug" | "info";
+};
+
+export default function(): PluginObj {
   const resolveFromCached = createCachedExportsHandler();
 
   return {
     name: "resolve-barrel-files",
     visitor: {
-      ImportDeclaration: function(path, state) {
+      ImportDeclaration: (path, state) => {
+        const castOpts = state.opts as Record<string, ModuleOption> | undefined;
         const moduleName = path.node.source.value;
-        const normalized = normalizePath(moduleName);
-        const sourceConfig = state.opts?.[normalized];
+        let normalized = moduleName;
+        if (normalized.startsWith(".") && state.file.opts.filename) {
+          normalized = normalizePath(pathLib.join(state.file.opts.filename, "..", moduleName));
+        }
 
+        const sourceConfig = castOpts?.[normalized];
         if (!sourceConfig) {
           return;
         }
@@ -37,17 +48,15 @@ module.exports = function() {
           moduleType,
         });
 
-        const [fullImports, memberImports] = partition(
-          specifier => specifier.type !== "ImportSpecifier",
-          path.node.specifiers,
-        );
+        for (const memberImport of path.node.specifiers) {
+          if (!t.isImportSpecifier(memberImport)) {
+            throw err("Full imports are not supported");
+          }
 
-        if (fullImports.length) {
-          err("Full imports are not supported");
-        }
+          const importName = t.isIdentifier(memberImport.imported)
+            ? memberImport.imported.name
+            : memberImport.imported.value;
 
-        for (const memberImport of memberImports) {
-          const importName = memberImport.imported.name;
           const localName = memberImport.local.name;
           const exportInfo = exports[importName];
 
@@ -67,15 +76,15 @@ module.exports = function() {
           let newImportSpecifier = memberImport;
 
           if (exportInfo.importAlias) {
-            newImportSpecifier = types.importSpecifier(
-              types.identifier(localName),
-              types.identifier(exportInfo.importAlias),
+            newImportSpecifier = t.importSpecifier(
+              t.identifier(localName),
+              t.identifier(exportInfo.importAlias),
             );
           }
 
-          transforms.push(types.importDeclaration(
+          transforms.push(t.importDeclaration(
             [newImportSpecifier],
-            types.stringLiteral(importFrom),
+            t.stringLiteral(importFrom),
           ));
         }
 
@@ -85,4 +94,4 @@ module.exports = function() {
       },
     },
   };
-};
+}

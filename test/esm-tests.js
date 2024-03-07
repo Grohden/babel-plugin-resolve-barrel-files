@@ -48,7 +48,7 @@ describe("esm import transformations", function() {
 
   it("should resolve independent of barrel import path", function() {
     const code = transform({
-      libraryName: barrelFolder + "/esm",
+      libraryName: "./test/fixtures/esm",
       moduleType: "esm",
       mainBarrelPath: esmBarrel,
     })(`import { foo, bar, bazz } from './test/fixtures/esm';`);

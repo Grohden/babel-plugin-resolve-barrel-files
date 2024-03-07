@@ -1,7 +1,7 @@
-const DEBUG = 1;
-const INFO = 2;
+export const DEBUG = 1;
+export const INFO = 2;
 
-function resolveLogLevel(level) {
+export function resolveLogLevel(level: string | undefined) {
   switch (level) {
     case "debug":
       return DEBUG;
@@ -11,9 +11,3 @@ function resolveLogLevel(level) {
       return 0;
   }
 }
-
-module.exports = {
-  DEBUG,
-  INFO,
-  resolveLogLevel,
-};

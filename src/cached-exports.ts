@@ -1,15 +1,20 @@
-const { collectEsmExports } = require("./collect-esm-exports");
-const { collectCjsExports } = require("./collect-cjs-exports");
-const { INFO } = require("./log");
+import { collectCjsExports } from "./collect-cjs-exports";
+import { collectEsmExports } from "./collect-esm-exports";
+import { INFO } from "./log";
 
-const createCachedExportsHandler = (exports) => {
-  const cachedResolvers = {};
+export const createCachedExportsHandler = () => {
+  const cachedResolvers: Record<string, any> = {};
 
   return function getCachedExports({
     logLevel,
     moduleName,
     barrelFilePath,
     moduleType,
+  }: {
+    logLevel: number;
+    moduleName: string;
+    barrelFilePath: string;
+    moduleType: string;
   }) {
     if (cachedResolvers[moduleName]) {
       return cachedResolvers[moduleName];
@@ -28,5 +33,3 @@ const createCachedExportsHandler = (exports) => {
     return cachedResolvers[moduleName];
   };
 };
-
-module.exports = { createCachedExportsHandler };

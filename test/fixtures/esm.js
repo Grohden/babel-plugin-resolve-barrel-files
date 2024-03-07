@@ -1,4 +1,4 @@
-export * from "../../src/../test/fixtures/esm-subfile";
+export * from "../../src/../test/fixtures/esm-sub-barrel";
 export { Abc as Bazz } from "./bazz";
 export { default as Buzz } from "./buzz";
 export { Bar, Foo } from "./foo-bar";

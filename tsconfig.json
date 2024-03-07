@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "declaration": false,
+    "sourceMap": false,
+    "pretty": true,
+    "removeComments": false,
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "skipLibCheck": false,
+    "resolveJsonModule": true,
+    "noImplicitThis": true,
+    "noImplicitAny": true,
+    "strictBindCallApply": true,
+    "incremental": true,
+    "strictNullChecks": true,
+    "outDir": "./dist"
+  },
+  "include": [
+    "./src/**/*"
+  ]
+}

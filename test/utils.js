@@ -13,7 +13,6 @@ function createOptions({
     [libraryName]: {
       mainBarrelPath,
       moduleType,
-      logLevel: "info",
     },
   };
 }
@@ -22,7 +21,7 @@ const transform = (options) =>
   (code) => {
     return babel.transform(code, {
       presets: [["@babel/preset-env", { modules: false }]],
-      plugins: [["./index", createOptions(options)]],
+      plugins: [["./dist/index", createOptions(options)]],
     }).code;
   };
 
